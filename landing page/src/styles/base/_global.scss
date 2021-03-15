@@ -1,0 +1,30 @@
+//Global Styles
+body {
+  max-width: 75rem;
+  padding: 0 1rem;
+  margin: 0 auto;
+  overflow-x: hidden;
+  font-weight: "$medium";
+  background-color: "$light";
+  font-family: helvetica;
+  color: "$primary";
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: currentColor;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+:focus {
+  outline: 2px dotted;
+  outline-offset: 0.25rem;
+}
