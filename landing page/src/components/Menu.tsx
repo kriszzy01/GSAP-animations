@@ -25,9 +25,9 @@ export const Menu: React.FC<MenuProps> = ({ toggleMenu, setToggleMenu }) => {
         });
 
         gsap.from(".nav_child", {
-          duration: 1,
+          duration: 0.8,
           ease: "Power4.easeInOut",
-          stagger: 0.02,
+          stagger: 0.2,
           height: "0",
           transformOrigin: "right top",
           skewY: 7,
@@ -37,7 +37,7 @@ export const Menu: React.FC<MenuProps> = ({ toggleMenu, setToggleMenu }) => {
       default:
         gsap.to(".nav_child", {
           ease: "Power4.easeInOut",
-          stagger: 0.02,
+          stagger: (index) => (index ? 0 : 0.1), //0 is falsy, 1 is truthy
           height: "0",
         });
         break;
@@ -63,6 +63,7 @@ export const Menu: React.FC<MenuProps> = ({ toggleMenu, setToggleMenu }) => {
 
   return (
     <nav className="nav" onClick={() => setToggleMenu(false)}>
+      <div className="nav_before nav_child"></div>
       <div className="nav_links nav_child">
         <ul>
           <Link
@@ -93,8 +94,6 @@ export const Menu: React.FC<MenuProps> = ({ toggleMenu, setToggleMenu }) => {
           </Link>
         </ul>
       </div>
-
-      <div className="nav_before nav_child"></div>
     </nav>
   );
 };
