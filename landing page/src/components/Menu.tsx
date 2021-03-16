@@ -1,54 +1,75 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 
-import {
-  menuHide,
-  menuShow,
-  onMouseHover,
-  onMouseExit,
-  staggerLinks,
-} from "../utils";
-
-import { State } from "../types";
-
 interface MenuProps {
-  state?: State;
+  toggleMenu: boolean;
+  setToggleMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Menu: React.FC<MenuProps> = ({ state }) => {
-  useEffect(() => {
-    if (!state?.clicked) {
-      menuHide(".nav_links", ".nav_before");
+export const Menu: React.FC<MenuProps> = ({ toggleMenu, setToggleMenu }) => {
+  const animateMenu = useCallback(() => {
+    switch (toggleMenu) {
+      case true:
+        gsap.set(".nav", { duration: 0, display: "block" });
+        gsap.set(".nav_child", { duration: 1, height: "100%" });
 
-      gsap.to(".nav", {
-        duration: 1,
-        display: "none",
-      });
-    } else if (state.clicked || (state.clicked && !state.initial)) {
-      gsap.to(".nav", { duration: 0, display: "block" });
+        //Stagger the links
+        gsap.from(".links", {
+          opacity: 0,
+          y: 100,
+          delay: 0.7,
+          ease: "bounce",
+          stagger: 0.3,
+          overflow: "hidden",
+        });
 
-      gsap.to([".nav_before", ".nav_links"], {
-        duration: 0,
-        opacity: 1,
-        height: "100%",
-      });
+        gsap.from(".nav_child", {
+          duration: 1,
+          ease: "Power4.easeInOut",
+          stagger: 0.02,
+          height: "0",
+          transformOrigin: "right top",
+          skewY: 7,
+        });
+        break;
 
-      menuShow(".nav_links", ".nav_before");
-
-      staggerLinks(".links");
+      default:
+        gsap.to(".nav_child", {
+          ease: "Power4.easeInOut",
+          stagger: 0.02,
+          height: "0",
+        });
+        break;
     }
-  }, [state]);
+  }, [toggleMenu]);
+
+  const handleHover = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    skewX: number,
+    y: number
+  ) => {
+    gsap.to(event.target, {
+      duration: 0.5,
+      y,
+      skewX,
+      ease: "power4.inOut",
+    });
+  };
+
+  useEffect(() => {
+    animateMenu();
+  }, [animateMenu, toggleMenu]);
 
   return (
-    <nav className="nav">
-      <div className="nav_links">
+    <nav className="nav" onClick={() => setToggleMenu(false)}>
+      <div className="nav_links nav_child">
         <ul>
           <Link
             to="/about"
             className="links"
-            onMouseEnter={onMouseHover}
-            onMouseLeave={onMouseExit}
+            onMouseEnter={(event) => handleHover(event, 4, 6)}
+            onMouseLeave={(event) => handleHover(event, -4, 0)}
           >
             About
           </Link>
@@ -56,8 +77,8 @@ export const Menu: React.FC<MenuProps> = ({ state }) => {
           <Link
             to="/gallary"
             className="links"
-            onMouseEnter={onMouseHover}
-            onMouseLeave={onMouseExit}
+            onMouseEnter={(event) => handleHover(event, 4, 6)}
+            onMouseLeave={(event) => handleHover(event, -4, 0)}
           >
             Gallary
           </Link>
@@ -65,15 +86,15 @@ export const Menu: React.FC<MenuProps> = ({ state }) => {
           <Link
             to="/contact"
             className="links"
-            onMouseEnter={onMouseHover}
-            onMouseLeave={onMouseExit}
+            onMouseEnter={(event) => handleHover(event, 4, 6)}
+            onMouseLeave={(event) => handleHover(event, -4, 0)}
           >
             Contact
           </Link>
         </ul>
       </div>
 
-      <div className="nav_before"></div>
+      <div className="nav_before nav_child"></div>
     </nav>
   );
 };
